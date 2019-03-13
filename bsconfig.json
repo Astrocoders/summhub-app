@@ -1,0 +1,56 @@
+{
+  "gentypeconfig": {
+    "language": "untyped",
+    "shims": {},
+    "debug": {
+      "all": false,
+      "basic": false
+    }
+  },
+  "name": "summhub",
+  "namespace": true,
+  "reason": {
+    "react-jsx": 2
+  },
+  "bsc-flags": ["-bs-super-errors"],
+  "bs-dependencies": [
+    "bs-react-native",
+    "reason-react",
+    "reason-apollo",
+    "@gabrielrubens/bs-numeral",
+    "bs-react-native-paper",
+    "bs-react-native-vector-icons",
+    "nautilus",
+    "re-containers",
+    "bs-reform",
+    "bs-moment",
+    "re-debouncer",
+    "bs-log"
+  ],
+  "sources": [
+    {
+      "dir": "src",
+      "subdirs": [
+        { "dir": "types" },
+        { "dir": "scenes" },
+        { "dir": "components" }
+      ]
+    },
+    {
+      "dir": "storybook/stories"
+    }
+  ],
+  "refmt": 3,
+  "package-specs": {
+    "module": "commonjs",
+    "in-source": true
+  },
+  "warnings": {
+    "error": "+8"
+  },
+  "suffix": ".bs.js",
+  "ppx-flags": [
+    "lenses-ppx/ppx",
+    "bs-log/ppx"
+  ]
+}

@@ -1,0 +1,19 @@
+patch-package
+--- c/node_modules/reason-apollo/src/graphql-types/ReasonApolloQuery.re
++++ i/node_modules/reason-apollo/src/graphql-types/ReasonApolloQuery.re
+@@ -129,6 +129,7 @@ module Get = (Config: ReasonApolloTypes.Config) => {
+         ~displayName: option(string)=?,
+         ~delay: option(bool)=?,
+         ~context: option(Js.Json.t)=?,
++        ~client: option('a)=?,
+         children: renderPropObj => ReasonReact.reactElement,
+       ) =>
+     ReasonReact.wrapJsForReason(
+@@ -136,6 +137,7 @@ module Get = (Config: ReasonApolloTypes.Config) => {
+       ~props=
+         Js.Nullable.(
+           {
++            "client": client |> fromOption,
+             "query": graphqlQueryAST,
+             "variables": variables |> fromOption,
+             "pollInterval": pollInterval |> fromOption,

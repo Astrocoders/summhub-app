@@ -1,0 +1,12 @@
+patch-package
+--- c/node_modules/numeral/locales/pt-br.js
++++ i/node_modules/numeral/locales/pt-br.js
+@@ -26,7 +26,7 @@
+             return 'º';
+         },
+         currency: {
+-            symbol: 'R$'
++            symbol: 'R$ '
+         }
+     });
+ }));

@@ -1,0 +1,6 @@
+git_url("https://github.com/Astrocoders/astro-certificates.git")
+
+type("appstore")
+app_identifier(["app.summhub"])
+username("bots@astrocoders.com")
+readonly(true)

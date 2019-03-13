@@ -1,0 +1,133 @@
+version: 2
+jobs:
+  build_ios: 
+    macos:
+      xcode: "9.0.0"
+
+    environment:
+      FL_OUTPUT_DIR: output
+      LC_ALL: en_US.UTF-8
+      LANG: en_US.UTF-8
+
+    # use a --login shell so our "set Ruby version" command gets picked up for later steps
+    shell: /bin/bash --login -o pipefail
+
+    working_directory: ~/repo
+
+    steps:
+      - checkout
+
+      - restore_cache:
+          key: pod-{{ checksum "ios/Podfile.lock" }}-{{ arch }}
+
+      - run:
+          name: set Ruby version
+          command:  echo "ruby-2.4" > ~/.ruby-version
+
+      - run: bundler install
+
+      - run: yarn install
+
+      - save_cache:
+          key: pod-{{ checksum "ios/Podfile.lock" }}-{{ arch }}
+          paths:
+            - ios/Pods
+
+      - run: sudo xcode-select -s "/Applications/Xcode-9.app"
+
+      - run:
+          name: Build ReasonML
+          command: yarn bs:build
+
+      - run:
+          name: Build and release iOS to TestFlight
+          command: bundle exec fastlane ios beta
+
+      - store_artifacts:
+          path: output
+
+  build_android:
+    environment:
+      LC_ALL: C.UTF-8
+      LANG: en_US.UTF-8
+      LANGUAGE: en_US.UTF-8
+
+    docker:
+      - image: circleci/android:api-28-node 
+
+    working_directory: ~/repo
+
+    steps:
+      - checkout
+
+      - run:
+          name: Install node deps
+          command: yarn install
+
+      - run:
+          name: Build ReasonML
+          command: yarn bs:build
+
+      # - run:
+      #     name: Install RubyGems
+      #     command: sudo apt-get install rubygems
+
+      # - run:
+      #     name: Install Ruby Headers
+      #     command: sudo apt-get install ruby-all-dev
+
+      # - run:
+      #     name: Install Fastlane
+      #     command: sudo gem install bundler && sudo bundle update
+
+      - run:
+          name: Build Production App
+          environment:
+            ANDROID_KEYSTORE_FILE: production.keystore
+          command: |
+            echo ${ANDROID_PRODUCTION_KEYSTORE_FILE} | base64 --decode > android/app/production.keystore
+            export ANDROID_KEY_PASSWORD=${ANDROID_PRODUCTION_KEYSTORE_PASSWORD}
+            export ANDROID_KEYSTORE_PASSWORD=${ANDROID_PRODUCTION_KEYSTORE_PASSWORD}
+            export ANDROID_KEY_ALIAS=${ANDROID_PRODUCTION_KEY_ALIAS}
+            env $(cat .env.production | xargs) yarn android:release:generate:ci
+
+      # - run:
+      #     name: Build Staging App
+      #     environment:
+      #       ANDROID_KEYSTORE_FILE: my-release-key.keystore
+      #     command: |
+      #       export ANDROID_KEY_PASSWORD=${ANDROID_STAGING_KEYSTORE_PASSWORD}
+      #       export ANDROID_KEYSTORE_PASSWORD=${ANDROID_STAGING_KEYSTORE_PASSWORD}
+      #       export ANDROID_KEY_ALIAS=${ANDROID_STAGING_KEY_ALIAS}
+      #       rm -rf .env.production
+      #       mv .env.staging .env.production
+      #       env $(cat .env.production | xargs) yarn android:staging:generate:ci
+      # - run:
+      #     name: Init Supply
+      #     command: fastlane supply init
+
+      # - run:
+      #     name: Deploy Beta
+      #     command: fastlane android beta
+
+      - store_artifacts:
+          path: ./android/app/build/outputs/apk/production/release/app-production-release.apk
+          destination: app-production-release.apk
+
+      - store_artifacts:
+          path: ./android/app/build/outputs/apk/staging/release/app-staging-release.apk
+          destination: app-staging-release.apk
+
+      - run:
+          name: Send APK to Discord
+          command: node .circleci/send-artifacts-to-discord.js
+
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - build_android
+      - build_ios:
+          filters:
+            branches:
+              only: master

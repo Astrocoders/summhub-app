@@ -1,0 +1,154 @@
+fastlane_require 'dotenv/load'
+
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+
+ANDROID_DIR = File.expand_path('../android', __dir__)
+IOS_DIR = File.expand_path('../ios', __dir__)
+PROJECT_NAME = "summhub"
+IOS_APP_ID = "app.summhub"
+ITC_TEAM_ID = "xxxx"
+IOS_APPLE_ID = "bots@astrocoders.com"
+
+def package
+  $package_json ||= JSON.parse(
+    File.read('../package.json'),
+    symbolize_names: true
+  )
+end
+
+def version_name(args)
+    tag = args[:tag] || ''
+    version = args[:version] || package[:version]
+    version << '-' << tag unless tag.empty?
+    version
+end
+
+def android_certificate()
+  {
+    'android.injected.signing.store.file' => ENV['ANDROID_KEYSTORE_FILE'],
+    'android.injected.signing.store.password' => ENV['ANDROID_KEYSTORE_PASSWORD'],
+    'android.injected.signing.key.alias' => ENV['ANDROID_KEY_ALIAS'],
+    'android.injected.signing.key.password' => ENV['ANDROID_KEY_PASSWORD']
+  }
+end
+
+platform :ios do
+  before_all do
+    # Creates a temporary keychain for Match
+    # Ensures Match is on readonly mode
+    # Better logs and collectables
+    setup_circle_ci
+  end
+
+  desc "Sets up a new build for TestFlight"
+  lane :beta do |args|
+    match
+
+    current_build_number = sh("cd #{IOS_DIR} && /usr/libexec/PlistBuddy -c \"Print CFBundleVersion\" #{PROJECT_NAME}/Info.plist").to_i
+    latest_build_number = latest_testflight_build_number(
+      team_id: ITC_TEAM_ID,
+      app_identifier: IOS_APP_ID,
+      username: IOS_APPLE_ID,
+      initial_build_number: 0
+    ).to_i
+
+    # Only deploy to TestFlight if build number was manually changed
+    if current_build_number > latest_build_number
+      gym(
+        scheme: PROJECT_NAME,
+        workspace: "#{IOS_DIR}/#{PROJECT_NAME}.xcworkspace",
+        include_bitcode: true,
+        export_method: "app-store",
+        configuration: "Production",
+      )
+      pilot(username: IOS_APPLE_ID, app_identifier: IOS_APP_ID, skip_waiting_for_build_processing: true)
+    else
+      UI.message "Build number was not increased, so skipping"
+    end
+  end
+end
+
+platform :android do
+  BUILD_NUMBER_PATTERN = '(versionCode) ([[:digit:]]*)'
+  VERSION_NAME_PATTERN = '(versionName) "(.*)"'
+
+  desc "Bump build and version numbers"
+  lane :bump do |args|
+    gradle_build = "#{ANDROID_DIR}/app/build.gradle"
+    version = version_name args
+    build_number = args[:build_number]
+    unless build_number
+      build_number = sh "awk 'match($0,/#{BUILD_NUMBER_PATTERN}/) {print $2}' #{gradle_build}"
+      build_number = build_number.to_i + 1
+    end
+    # Set extended regex option according to OS
+    # http://www.grymoire.com/Unix/Sed.html#uh-4a
+    opt = case RUBY_PLATFORM
+          when /darwin/i then "Ei ''"
+          when /linux|arch/i then 'ri'
+          end
+    sh %Q{sed -#{opt} 's/#{BUILD_NUMBER_PATTERN}/\\1 #{build_number}/' #{gradle_build}}
+    sh %Q{sed -#{opt} 's/#{VERSION_NAME_PATTERN}/\\1 "#{version}"/' #{gradle_build}}
+  end
+
+  desc "Build staging apk file"
+  lane :buildStaging do |signed: false, bump: false, **options|
+    bump options if bump
+    build_options = signed ? {print_command: false, properties: android_certificate} : {}
+    gradle(
+      task: "assemble",
+      flavor: "staging",
+      build_type: "release",
+      project_dir: ANDROID_DIR,
+      **build_options
+    )
+  end
+
+  desc "Build development apk file"
+  lane :buildDevelopment do |signed: false, bump: false, **options|
+    bump options if bump
+    build_options = signed ? {print_command: false, properties: android_certificate} : {}
+
+    gradle(
+      task: "assemble",
+      flavor: "development",
+      build_type: "release",
+      project_dir: ANDROID_DIR,
+      **build_options
+    )
+  end
+
+  desc "Build production apk file"
+  lane :buildProduction do |signed: false, bump: false, **options|
+    bump options if bump
+    build_options = signed ? {print_command: false, properties: android_certificate} : {}
+
+    gradle(
+      task: "assemble",
+      flavor: "production",
+      build_type: "release",
+      project_dir: ANDROID_DIR,
+      **build_options
+    )
+  end
+
+  desc "Publish beta build"
+  lane :beta do
+    upload_to_play_store(track: 'beta')
+  end
+
+  desc "Publish release build"
+  lane :playstore do
+    upload_to_play_store
+  end
+
+  desc "Upload the latest output APK to Slack channel"
+  lane :upload_to_slack do |options|
+    full_file_path = "../android/app/build/outputs/apk/staging/release/app-staging-release.apk"
+    file_name = full_file_path.gsub(/\/.*\//,"")
+    sh "echo Uploading " + file_name + " to Slack"
+    sh "curl https://slack.com/api/files.upload -F token=\"#{ENV[ "SLACK_TOKEN" ]}\" -F channels=\"#{ENV[ "SLACK_CHANNEL" ]}\" -F title=\"" + file_name + "\" -F filename=\"" + file_name + "\" -F file=@" + full_file_path
+  end
+end

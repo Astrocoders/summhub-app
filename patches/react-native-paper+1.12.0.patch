@@ -1,0 +1,243 @@
+patch-package
+--- a/node_modules/react-native-paper/src/components/Snackbar.js
++++ b/node_modules/react-native-paper/src/components/Snackbar.js
+@@ -1,13 +1,13 @@
+ /* @flow */
+ 
+-import * as React from 'react';
+-import { StyleSheet, Animated } from 'react-native';
++import * as React from 'react'
++import { StyleSheet, Animated } from 'react-native'
+ 
+-import Text from './Typography/Text';
+-import ThemedPortal from './Portal/ThemedPortal';
+-import withTheme from '../core/withTheme';
+-import { white } from '../styles/colors';
+-import type { Theme } from '../types';
++import Text from './Typography/Text'
++import ThemedPortal from './Portal/ThemedPortal'
++import withTheme from '../core/withTheme'
++import { white } from '../styles/colors'
++import type { Theme } from '../types'
+ 
+ type Props = {
+   /**
+@@ -40,7 +40,7 @@ type Props = {
+    * @optional
+    */
+   theme: Theme,
+-};
++}
+ 
+ type State = {
+   layout: {
+@@ -49,13 +49,13 @@ type State = {
+   },
+   opacity: Animated.Value,
+   translateY: Animated.Value,
+-};
++}
+ 
+-const SNACKBAR_ANIMATION_DURATION = 250;
++const SNACKBAR_ANIMATION_DURATION = 250
+ 
+-const DURATION_SHORT = 2500;
+-const DURATION_LONG = 3500;
+-const DURATION_INDEFINITE = Infinity;
++const DURATION_SHORT = 2500
++const DURATION_LONG = 3500
++const DURATION_INDEFINITE = Infinity
+ 
+ /**
+  * Snackbar provide brief feedback about an operation through a message at the bottom of the screen.
+@@ -114,21 +114,21 @@ class Snackbar extends React.Component<Props, State> {
+   /**
+    * Show the Snackbar for a short duration.
+    */
+-  static DURATION_SHORT = DURATION_SHORT;
++  static DURATION_SHORT = DURATION_SHORT
+ 
+   /**
+    * Show the Snackbar for a long duration.
+    */
+-  static DURATION_LONG = DURATION_LONG;
++  static DURATION_LONG = DURATION_LONG
+ 
+   /**
+    * Show the Snackbar for indefinite amount of time.
+    */
+-  static DURATION_INDEFINITE = DURATION_INDEFINITE;
++  static DURATION_INDEFINITE = DURATION_INDEFINITE
+ 
+   static defaultProps = {
+     duration: DURATION_LONG,
+-  };
++  }
+ 
+   state = {
+     layout: {
+@@ -137,53 +137,54 @@ class Snackbar extends React.Component<Props, State> {
+     },
+     opacity: new Animated.Value(0),
+     translateY: new Animated.Value(0),
+-  };
++  }
+ 
+   componentDidUpdate(prevProps) {
+     if (prevProps.visible !== this.props.visible) {
+-      this._toggle();
++      this._toggle()
+     }
+   }
+ 
+   componentWillUnmount() {
+-    clearTimeout(this._hideTimeout);
++    clearTimeout(this._hideTimeout)
+   }
+ 
+-  _hideTimeout: TimeoutID;
++  _hideTimeout: TimeoutID
+ 
+   _handleLayout = e => {
+-    const { height } = e.nativeEvent.layout;
+-    const { measured } = this.state.layout;
++    const { height } = e.nativeEvent.layout
++    const { measured } = this.state.layout
+ 
+     this.setState({ layout: { height, measured: true } }, () => {
+       if (measured) {
+         if (!this.props.visible) {
+           // If height changed and Snackbar was hidden, adjust the translate to keep it hidden
+-          this.state.translateY.setValue(height);
++          this.state.translateY.setValue(-height)
+         }
+       } else {
+         // Set the appropriate initial values if height was previously unknown
+-        this.state.translateY.setValue(height);
+-        this.state.opacity.setValue(0);
++        this.state.translateY.setValue(-height)
++        this.state.opacity.setValue(0)
+ 
+         // Perform the animation only if we're showing
+         if (this.props.visible) {
+-          this._show();
++          this._show()
+         }
+       }
+-    });
+-  };
++    })
++  }
+ 
+   _toggle = () => {
+     if (this.props.visible) {
+-      this._show();
++      this._show()
+     } else {
+-      this._hide();
++      this._hide()
+     }
+-  };
++  }
+ 
+   _show = () => {
+-    clearTimeout(this._hideTimeout);
++    console.log('Show')
++    clearTimeout(this._hideTimeout)
+ 
+     Animated.parallel([
+       Animated.timing(this.state.opacity, {
+@@ -197,16 +198,16 @@ class Snackbar extends React.Component<Props, State> {
+         useNativeDriver: true,
+       }),
+     ]).start(() => {
+-      const { duration } = this.props;
++      const { duration } = this.props
+ 
+       if (duration !== DURATION_INDEFINITE) {
+-        this._hideTimeout = setTimeout(this.props.onDismiss, duration);
++        this._hideTimeout = setTimeout(this.props.onDismiss, duration)
+       }
+-    });
+-  };
++    })
++  }
+ 
+   _hide = () => {
+-    clearTimeout(this._hideTimeout);
++    clearTimeout(this._hideTimeout)
+ 
+     Animated.parallel([
+       Animated.timing(this.state.opacity, {
+@@ -215,16 +216,16 @@ class Snackbar extends React.Component<Props, State> {
+         useNativeDriver: true,
+       }),
+       Animated.timing(this.state.translateY, {
+-        toValue: this.state.layout.height,
++        toValue: -this.state.layout.height,
+         duration: SNACKBAR_ANIMATION_DURATION,
+         useNativeDriver: true,
+       }),
+-    ]).start();
+-  };
++    ]).start()
++  }
+ 
+   render() {
+-    const { children, action, onDismiss, theme, style } = this.props;
+-    const { fonts, colors } = theme;
++    const { children, action, onDismiss, theme, style } = this.props
++    const { fonts, colors } = theme
+ 
+     return (
+       <ThemedPortal>
+@@ -254,18 +255,13 @@ class Snackbar extends React.Component<Props, State> {
+               },
+             ]}
+           >
+-            <Text style={[styles.content, { marginRight: action ? 0 : 24 }]}>
+-              {children}
+-            </Text>
++            <Text style={[styles.content, { marginRight: action ? 0 : 24 }]}>{children}</Text>
+             {action ? (
+               <Text
+-                style={[
+-                  styles.button,
+-                  { color: colors.accent, fontFamily: fonts.medium },
+-                ]}
++                style={[styles.button, { color: colors.accent, fontFamily: fonts.medium }]}
+                 onPress={() => {
+-                  action.onPress();
+-                  onDismiss();
++                  action.onPress()
++                  onDismiss()
+                 }}
+               >
+                 {action.label.toUpperCase()}
+@@ -274,7 +270,7 @@ class Snackbar extends React.Component<Props, State> {
+           </Animated.View>
+         </Animated.View>
+       </ThemedPortal>
+-    );
++    )
+   }
+ }
+ 
+@@ -282,7 +278,7 @@ const styles = StyleSheet.create({
+   wrapper: {
+     backgroundColor: '#323232',
+     position: 'absolute',
+-    bottom: 0,
++    top: 0,
+     width: '100%',
+     elevation: 6,
+   },
+@@ -302,6 +298,6 @@ const styles = StyleSheet.create({
+     paddingHorizontal: 24,
+     paddingVertical: 14,
+   },
+-});
++})
+ 
+-export default withTheme(Snackbar);
++export default withTheme(Snackbar)
