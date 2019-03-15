@@ -2173,7 +2173,7 @@ babel-code-frame@^6.26.0:
     esutils "^2.0.2"
     js-tokens "^3.0.2"
 
-babel-core@^6.0.0, babel-core@^6.26.0:
+babel-core@^6.0.0, babel-core@^6.26.0, babel-core@^6.26.3:
   version "6.26.3"
   resolved "https://registry.yarnpkg.com/babel-core/-/babel-core-6.26.3.tgz#b2e2f09e342d0f0c88e2f02e067794125e75c207"
   integrity sha512-6jyFLuDmeidKmUEb3NM+/yawG0M2bDZ9Z1qbZP59cyHLz8kYGKYwpJP0UwUKKUiTRNvxfLesJnTedqczP7cTDA==
@@ -3433,11 +3433,6 @@ bs-abstract@^0.16.0:
   resolved "https://registry.yarnpkg.com/bs-abstract/-/bs-abstract-0.16.0.tgz#cb214e0b45710c28562ddb671a736b084b8aaf86"
   integrity sha512-b1/qOWNBqL44lFciqEs73UxOwxAfnXeQgJtXGlfVwKYMZ6qNKgNrQe3Wokg8awQHs2EkmAJgtxku2zrGlwd/Jw==
 
-bs-epitath@^0.1.0:
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/bs-epitath/-/bs-epitath-0.1.0.tgz#7ee999c339c9bea70086cf90d937a95cc35fde0d"
-  integrity sha512-6Ru7bMMiL9EGRpcX/qfUXiILaseIJDlHP5BRabzMqEkXcJvKWDSTgy3NtluSG5FpPxnCvX0pfhC5fiPfHBAx6Q==
-
 bs-log@^0.0.9:
   version "0.0.9"
   resolved "https://registry.yarnpkg.com/bs-log/-/bs-log-0.0.9.tgz#b715a56dbf265a614ace828463ecd5dea9144397"
@@ -3452,6 +3447,12 @@ bs-platform@^4.0.18:
   version "4.0.18"
   resolved "https://registry.yarnpkg.com/bs-platform/-/bs-platform-4.0.18.tgz#d17b8693ba1f714d9b27e0ddb365f2069ba4b8a0"
   integrity sha512-BwzW0iYHvREqUZIgQxJmdJrxexppLvJxYQ4LLexbhCp7uZU5DIZ5ub4ZHpkCkc8fn8bsXWc+Rrejb3csi+BoAQ==
+
+bs-platform@bsansouci/bsb-native#3.2.0:
+  version "3.2.0"
+  resolved "https://codeload.github.com/bsansouci/bsb-native/tar.gz/84604c9f6a5611eed68372efdb575c00a3e72813"
+  dependencies:
+    yauzl "^2.9.1"
 
 bs-react-native-paper@^5.0.0-alpha.1:
   version "5.0.0-alpha.1"
@@ -7554,6 +7555,12 @@ lenses-ppx@^1.0.1:
   dependencies:
     bsb-native "^4.0.7000"
 
+let-anything@jaredly/let-anything:
+  version "1.0.0"
+  resolved "https://codeload.github.com/jaredly/let-anything/tar.gz/2bda56d29ea95f1233f0216247b00176f34619a7"
+  dependencies:
+    bs-platform bsansouci/bsb-native#3.2.0
+
 leven@^2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/leven/-/leven-2.1.0.tgz#c2e7a9f772094dee9d34202ae8acce4687875580"
@@ -9761,17 +9768,7 @@ react-devtools-core@^3.4.2:
     shell-quote "^1.6.1"
     ws "^3.3.1"
 
-react-dom@16.3.1:
-  version "16.3.1"
-  resolved "https://registry.yarnpkg.com/react-dom/-/react-dom-16.3.1.tgz#6a3c90a4fb62f915bdbcf6204422d93a7d4ca573"
-  integrity sha512-2Infg89vzahq8nfVi1GkjPqq0vrBvf0f3T0+dTtyjq4f6HKOqKixAK25Vr593O3QTx4kw/vmUtAJwerlevNWOA==
-  dependencies:
-    fbjs "^0.8.16"
-    loose-envify "^1.1.0"
-    object-assign "^4.1.1"
-    prop-types "^15.6.0"
-
-"react-dom@>=15.0.0 || >=16.0.0", react-dom@^16.6.3, react-dom@^16.7.0:
+"react-dom@>=15.0.0 || >=16.0.0", react-dom@>=16.3.3, react-dom@^16.6.3, react-dom@^16.7.0:
   version "16.8.4"
   resolved "https://registry.yarnpkg.com/react-dom/-/react-dom-16.8.4.tgz#1061a8e01a2b3b0c8160037441c3bf00a0e3bc48"
   integrity sha512-Ob2wK7XG2tUDt7ps7LtLzGYYB6DXMCLj0G5fO6WeEICtT4/HdpOi7W/xLzZnR6RCG1tYza60nMdqtxzA8FaPJQ==
@@ -10112,7 +10109,7 @@ react-native-view-shot@^2.5.0:
   resolved "https://registry.yarnpkg.com/react-native-view-shot/-/react-native-view-shot-2.5.0.tgz#428a997f470d3148d0067c5b46abd988ef1aa4c0"
   integrity sha512-xFJA+N7wh8Ik/17I4QB24e0a0L3atg1ScVehvtYR5UBTgHdzTFA0ZylvXp9gkZt7V+AT5Pni0H3NQItpqSKFoQ==
 
-react-native@^0.58.4:
+react-native@^0.58.6:
   version "0.58.6"
   resolved "https://registry.yarnpkg.com/react-native/-/react-native-0.58.6.tgz#a6d273cd2f51b0e3b141dad5f19622e0000497b3"
   integrity sha512-m/7L0gYXS4yHjs+PKmyurh1LLr7/tpobAX8Iv7Dwu4XT1ZcZFeCATn420E9U3nC2XsT54AmRR2Fv7VGgf+M2vQ==
