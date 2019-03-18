@@ -95,6 +95,7 @@ def enableProguardInReleaseBuilds = false
 
 android {
   compileSdkVersion rootProject.ext.compileSdkVersion
+  buildToolsVersion rootProject.ext.buildToolsVersion
 
   dexOptions {
       javaMaxHeapSize "4g"
