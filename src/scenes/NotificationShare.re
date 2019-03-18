@@ -3,7 +3,8 @@ open BsReactNative;
 module Styles = {
   open Style;
   let wrapper = style([flex(1.), backgroundColor(String("#fff"))]);
-  let body = style([padding(Pt(20.))]);
+  let body =
+    style([paddingHorizontal(Pt(20.)), paddingVertical(Pt(10.))]);
   let footer = style([marginTop(Pt(15.)), alignItems(Center)]);
 };
 
@@ -18,14 +19,15 @@ type info =
 
 let component = ReasonReact.statelessComponent("NotificationShare");
 
-let make = (~title, ~eventId, ~date, ~fields, _children) => {
+let make = (~title, ~eventId, ~date, ~data, ~fields, _children) => {
   ...component,
   render: _self => {
     let additionalFields =
       fields->Belt.Array.map(info =>
         switch (info) {
         | Field({label, value}) => <InfoField key=label label value />
-        | Title(value) => <Title value />
+        | Title(value) =>
+          <Title value style=Style.(style([marginTop(Pt(20.))])) />
         }
       );
     <View style=Styles.wrapper>
@@ -68,6 +70,7 @@ let make = (~title, ~eventId, ~date, ~fields, _children) => {
                  />
                  <ScrollView style=Styles.body>
                    <Title value="What happened?" />
+                   <JSONViewer data />
                    {ReasonReact.array(additionalFields)}
                    <InfoField label="Event ID" value=eventId />
                    <View style=Styles.footer>

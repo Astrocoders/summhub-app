@@ -1,5 +1,7 @@
 open BsReactNative;
 
+let data = {"name": "Foo", "age": 12};
+
 Storybook.(
   storiesOf("Notification", module_)
   |> add("default", () => <Notification />)
@@ -10,10 +12,6 @@ Storybook.(
            eventId="AKDJF19939399291DKD"
            date={Js.Date.make() |> Js.Date.toString}
            fields=[|
-             Field({
-               label: "Value Refunded",
-               value: Utils.Money.formatBRL(7990),
-             }),
              Title("Who?"),
              Field({label: "Name", value: "Gabriel Rubens"}),
              Field({label: "Email", value: "grsabreu@gmail.com"}),
@@ -21,6 +19,7 @@ Storybook.(
              Title("When?"),
              Field({label: "Event Time", value: "7 dec 22:21"}),
            |]
+           data
          />
        </View>
      )
