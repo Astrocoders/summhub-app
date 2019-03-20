@@ -8,8 +8,8 @@ let getOuterAppInitialState = (~url) =>
     let token = Utils.Linking.getParams(route);
     Js.log(route);
     Js.log(token);
-    [|ConfigOuterApp.Startup|];
-  | _ => [|ConfigOuterApp.Startup|]
+    [|ConfigOuterApp.Login|];
+  | _ => [|ConfigOuterApp.Login|]
   };
 type state = {
   finishedSettingUp: bool,
@@ -65,32 +65,30 @@ module NavigationLinkingListener = {
         Update({getNavigation: Some(getNavigation)})
       | HandleIncomingURL(url) =>
         SideEffects(
-          (
-            self =>
-              switch (self.state.getNavigation) {
-              | Some(getNavigation) =>
-                getNavigation(navigation =>
-                  resolve(navigation, urlToArray(. url))
-                )
-              | None => ()
-              }
-          ),
+          self =>
+            switch (self.state.getNavigation) {
+            | Some(getNavigation) =>
+              getNavigation(navigation =>
+                resolve(navigation, urlToArray(. url))
+              )
+            | None => ()
+            },
         )
       },
     didMount: self => {
       let listener = data => self.send(HandleIncomingURL(data##url));
       Linking.addEventListener("url", listener);
 
-      Platform.os() == Android ?
-        Linking.getInitialURL()
-        |> Js.Promise.then_(url =>
-             self.send(
-               HandleIncomingURL(Belt.Option.getWithDefault(url, "")),
+      Platform.os() == Android
+        ? Linking.getInitialURL()
+          |> Js.Promise.then_(url =>
+               self.send(
+                 HandleIncomingURL(Belt.Option.getWithDefault(url, "")),
+               )
+               |> Js.Promise.resolve
              )
-             |> Js.Promise.resolve
-           )
-        |> ignore :
-        ();
+          |> ignore
+        : ();
       self.onUnmount(() => Linking.removeEventListener("url", listener));
     },
     render: self =>
