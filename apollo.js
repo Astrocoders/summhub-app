@@ -52,6 +52,7 @@ const client = new ApolloClient({
   cache: new InMemoryCache({
     fragmentMatcher,
   }),
+  connectToDevTools: process.env.NODE_ENV === 'development',
 })
 
 export default client
