@@ -1,6 +1,6 @@
 {
   "name": "TouchID",
-  "version": "4.3.0",
+  "version": "4.4.1",
   "summary": "A React Native library for authenticating users with Touch ID",
   "homepage": "https://github.com/naoufal/react-native-touch-id",
   "license": "MIT",
