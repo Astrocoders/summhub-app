@@ -15,8 +15,6 @@
     "@storybook/addons": "^4.1.11",
     "@storybook/react-native": "^4.1.11",
     "app-icon": "^0.6.3",
-    "babel-core": "^6.26.3",
-    "babel-runtime": "^6.26.0",
     "chalk": "^2.4.1",
     "common-tags": "^1.8.0",
     "gentype": "^1.6.1",
@@ -40,6 +38,7 @@
     ]
   },
   "scripts": {
+    "clean": "rm -rf node_modules/ && rm -rf lib/",
     "start": "react-native start",
     "android": "react-native run-android",
     "android:clean": "cd android && ./gradlew clean",
