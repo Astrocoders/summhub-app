@@ -7,17 +7,13 @@ module Styles = {
 
 let component = ReasonReact.statelessComponent("BackButton");
 
-let make = (~onPress, _children) => {
+let make = (~onPress, ~color=AppConfig.theme.primary, _children) => {
   ...component,
   render: _self =>
     <TouchableOpacity
       onPress hitSlop={"top": 30, "bottom": 30, "left": 40, "right": 40}>
       <View style=Styles.backButton>
-        <RNIcons.MaterialCommunityIcons
-          name=`_arrowLeft
-          size=20.
-          color={AppConfig.theme.primary}
-        />
+        <RNIcons.MaterialCommunityIcons name=`_arrowLeft size=20. color />
       </View>
     </TouchableOpacity>,
 };

@@ -1,12 +1,12 @@
 [@bs.deriving jsConverter]
 type socialValues = [
-  | [@bs.as "WHATSAPP"] `whatsapp
-  | [@bs.as "PAGESMANAGER"] `pagesmanager
-  | [@bs.as "FACEBOOK"] `facebook
-  | [@bs.as "INSTAGRAM"] `instagram
-  | [@bs.as "GOOGLEPLUS"] `googleplus
-  | [@bs.as "EMAIL"] `email
-  | [@bs.as "PINTEREST"] `pinterest
+  | `whatsapp
+  | `pagesmanager
+  | `facebook
+  | `instagram
+  | `googleplus
+  | `email
+  | `pinterest
 ];
 
 [@bs.deriving abstract]
@@ -25,8 +25,7 @@ type openOptions = {
   subject: string,
   [@bs.optional]
   excludedActivityTypes: string,
-  [@bs.optional]
-  failOnCancel: string,
+  failOnCancel: bool,
   [@bs.optional]
   showAppsToView: string,
 };

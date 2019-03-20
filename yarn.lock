@@ -3468,11 +3468,6 @@ bs-abstract@^0.16.0:
   resolved "https://registry.yarnpkg.com/bs-abstract/-/bs-abstract-0.16.0.tgz#cb214e0b45710c28562ddb671a736b084b8aaf86"
   integrity sha512-b1/qOWNBqL44lFciqEs73UxOwxAfnXeQgJtXGlfVwKYMZ6qNKgNrQe3Wokg8awQHs2EkmAJgtxku2zrGlwd/Jw==
 
-bs-epitath@^0.1.0:
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/bs-epitath/-/bs-epitath-0.1.0.tgz#7ee999c339c9bea70086cf90d937a95cc35fde0d"
-  integrity sha512-6Ru7bMMiL9EGRpcX/qfUXiILaseIJDlHP5BRabzMqEkXcJvKWDSTgy3NtluSG5FpPxnCvX0pfhC5fiPfHBAx6Q==
-
 bs-log@^0.0.9:
   version "0.0.9"
   resolved "https://registry.yarnpkg.com/bs-log/-/bs-log-0.0.9.tgz#b715a56dbf265a614ace828463ecd5dea9144397"
@@ -3487,6 +3482,12 @@ bs-platform@^4.0.18:
   version "4.0.18"
   resolved "https://registry.yarnpkg.com/bs-platform/-/bs-platform-4.0.18.tgz#d17b8693ba1f714d9b27e0ddb365f2069ba4b8a0"
   integrity sha512-BwzW0iYHvREqUZIgQxJmdJrxexppLvJxYQ4LLexbhCp7uZU5DIZ5ub4ZHpkCkc8fn8bsXWc+Rrejb3csi+BoAQ==
+
+bs-platform@bsansouci/bsb-native#3.2.0:
+  version "3.2.0"
+  resolved "https://codeload.github.com/bsansouci/bsb-native/tar.gz/84604c9f6a5611eed68372efdb575c00a3e72813"
+  dependencies:
+    yauzl "^2.9.1"
 
 bs-react-native-paper@^5.0.0-alpha.1:
   version "5.0.0-alpha.1"
@@ -7589,6 +7590,12 @@ lenses-ppx@^1.0.1:
   dependencies:
     bsb-native "^4.0.7000"
 
+let-anything@jaredly/let-anything:
+  version "1.0.0"
+  resolved "https://codeload.github.com/jaredly/let-anything/tar.gz/2bda56d29ea95f1233f0216247b00176f34619a7"
+  dependencies:
+    bs-platform bsansouci/bsb-native#3.2.0
+
 leven@^2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/leven/-/leven-2.1.0.tgz#c2e7a9f772094dee9d34202ae8acce4687875580"
@@ -9823,7 +9830,17 @@ react-devtools-core@^3.6.0:
     shell-quote "^1.6.1"
     ws "^3.3.1"
 
-"react-dom@>=15.0.0 || >=16.0.0", react-dom@>=16.3.3, react-dom@^16.6.3, react-dom@^16.7.0:
+react-dom@16.6.3:
+  version "16.6.3"
+  resolved "https://registry.yarnpkg.com/react-dom/-/react-dom-16.6.3.tgz#8fa7ba6883c85211b8da2d0efeffc9d3825cccc0"
+  integrity sha512-8ugJWRCWLGXy+7PmNh8WJz3g1TaTUt1XyoIcFN+x0Zbkoz+KKdUyx1AQLYJdbFXjuF41Nmjn5+j//rxvhFjgSQ==
+  dependencies:
+    loose-envify "^1.1.0"
+    object-assign "^4.1.1"
+    prop-types "^15.6.2"
+    scheduler "^0.11.2"
+
+"react-dom@>=15.0.0 || >=16.0.0", react-dom@^16.6.3, react-dom@^16.7.0:
   version "16.8.4"
   resolved "https://registry.yarnpkg.com/react-dom/-/react-dom-16.8.4.tgz#1061a8e01a2b3b0c8160037441c3bf00a0e3bc48"
   integrity sha512-Ob2wK7XG2tUDt7ps7LtLzGYYB6DXMCLj0G5fO6WeEICtT4/HdpOi7W/xLzZnR6RCG1tYza60nMdqtxzA8FaPJQ==
