@@ -28,6 +28,7 @@
     "prettier": "^1.13.7",
     "prop-types": "^15.6.2",
     "react-dom": ">=16.3.3",
+    "react-native-graphql-transformer": "0.1.3",
     "react-test-renderer": "16.3.1",
     "standard-version": "^4.4.0"
   },
@@ -89,6 +90,7 @@
     "graphql": "^0.13.2",
     "graphql-tag": "^2.9.2",
     "lenses-ppx": "^1.0.1",
+    "let-anything": "jaredly/let-anything",
     "lodash": "^4.17.11",
     "nautilus": "Astrocoders/nautilus#3cda7027ed06efeafaef1007db38ead64773bdcd",
     "numeral": "^2.0.6",

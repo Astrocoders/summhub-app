@@ -49,8 +49,5 @@
     "error": "+8"
   },
   "suffix": ".bs.js",
-  "ppx-flags": [
-    "lenses-ppx/ppx",
-    "bs-log/ppx"
-  ]
+  "ppx-flags": ["graphql_ppx/ppx", "let-anything/lib/bs/native/let_anything.native", "lenses-ppx/ppx", "bs-log/ppx"]
 }
