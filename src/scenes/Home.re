@@ -16,6 +16,39 @@ module Styles = {
   let contentDate = style([fontSize(Float(12.))]);
 };
 
+module Query = [%graphql
+  {|
+query AppQuery {
+  currentUser {
+    id
+    email
+    role
+    summary {
+      unread
+      total
+      projects
+      organizations
+    }
+    notifications {
+      id
+      title
+      createdAt
+      icon
+      link
+    }
+  }
+}
+|}
+];
+
+module QueryContainer = ReasonApollo.CreateQuery(Query);
+
+module StateConfig = {
+  type state = Deeplinking.state;
+};
+
+module State = ReContainers.WithState.Make(StateConfig);
+
 let component = ReasonReact.statelessComponent("Home");
 
 let make = _children => {
