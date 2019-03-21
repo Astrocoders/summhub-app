@@ -9,6 +9,7 @@ module Styles = {
       borderRadius(10.),
       height(Pt(100.)),
       padding(Pt(15.)),
+      margin(Pt(20.)),
     ]);
 
   let summaryTitleWrapper =
@@ -61,26 +62,49 @@ module Styles = {
 
 let component = ReasonReact.statelessComponent("SummaryPanel");
 
-let make = (~onPress, ~style=Style.(style([])), _children) => {
+let make =
+    (
+      ~onPress,
+      ~date,
+      ~unread,
+      ~projectsCount,
+      ~organizationsCount,
+      ~totalNotifications,
+      ~style=Style.(style([])),
+      _children,
+    ) => {
   ...component,
   render: _self =>
     <Paper.Card style={Style.combine(Styles.wrapper, style)}>
       <TouchableOpacity onPress>
         <View style=Styles.summaryTitleWrapper>
           <AppText value="Today" style=Styles.title />
-          <AppText value="7 mar" style=Styles.dateTitle />
+          <AppText value=date style=Styles.dateTitle />
         </View>
         <View style=Styles.columnsWrapper>
           <View style=Styles.columnWrapper>
-            <AppText value="20/340" style=Styles.columnContent />
+            <AppText
+              value={
+                string_of_int(unread)
+                ++ "/"
+                ++ string_of_int(totalNotifications)
+              }
+              style=Styles.columnContent
+            />
             <AppText value="Notifications" style=Styles.columnTitle />
           </View>
           <View style=Styles.columnWrapper>
-            <AppText value="0" style=Styles.columnContent />
+            <AppText
+              value={string_of_int(projectsCount)}
+              style=Styles.columnContent
+            />
             <AppText value="Projects" style=Styles.columnTitle />
           </View>
           <View style=Styles.columnWrapper>
-            <AppText value="0" style=Styles.columnContent />
+            <AppText
+              value={string_of_int(organizationsCount)}
+              style=Styles.columnContent
+            />
             <AppText value="Organizations" style=Styles.columnTitle />
           </View>
         </View>

@@ -1,4 +1,5 @@
 open BsReactNative;
+open NavigationConfig.InApp;
 
 module Styles = {
   open Style;
@@ -51,117 +52,152 @@ module State = ReContainers.WithState.Make(StateConfig);
 
 let component = ReasonReact.statelessComponent("Home");
 
-let make = _children => {
+let make = (~navigation, _children) => {
   ...component,
-  render: _self =>
-    <View style=Styles.wrapper>
-      <AppStatusBar mode=Light />
-      <AppBar title="Summ" renderLeft={_ => <BackButton onPress=ignore />} />
-      <SummaryPanel onPress=ignore style=Style.(style([margin(Pt(20.))])) />
-      <Tabs
-        tabs=[
-          {
-            label: {j|All|j},
-            renderContent: () =>
-              <ScrollView
-                style=Styles.tabWrapper
-                contentContainerStyle=Styles.infoTabContent>
-                <AppList
-                  renderItems={_ =>
-                    <ScrollView>
-                      <ListItem
-                        onPress=ignore
-                        renderLeft={_ => <ListItemIcon icon=`_iosCheckmark />}
-                        renderCenter={_ =>
-                          <View style=Styles.content>
-                            <AppText
-                              value="R$ 79,90 refunded"
-                              style=Styles.contentTitle
-                            />
-                            <AppText
-                              value="grsabreu+lionnn@gmail.com"
-                              style=Styles.contentDetail
-                            />
-                            <AppText
-                              value="7 dec 22:21"
-                              style=Styles.contentDate
-                            />
-                          </View>
-                        }
-                        renderRight={_ => <ListItemMoreInfo direction=Right />}
-                      />
-                      <ListItem
-                        onPress=ignore
-                        renderLeft={_ => <ListItemIcon icon=`_iosCheckmark />}
-                        renderCenter={_ =>
-                          <View style=Styles.content>
-                            <AppText
-                              value="R$ 79,90 refunded"
-                              style=Styles.contentTitle
-                            />
-                            <AppText
-                              value="grsabreu+lionnn@gmail.com"
-                              style=Styles.contentDetail
-                            />
-                            <AppText
-                              value="7 dec 22:21"
-                              style=Styles.contentDate
-                            />
-                          </View>
-                        }
-                        renderRight={_ => <ListItemMoreInfo direction=Right />}
-                      />
-                    </ScrollView>
-                  }
-                />
-              </ScrollView>,
-          },
-          {
-            label: {j|1w|j},
-            renderContent: () =>
-              <ScrollView
-                style=Styles.tabWrapper
-                contentContainerStyle=Styles.infoTabContent>
-                <Title value="1" />
-              </ScrollView>,
-          },
-          {
-            label: {j|4w|j},
-            renderContent: () =>
-              <ScrollView
-                style=Styles.tabWrapper
-                contentContainerStyle=Styles.infoTabContent>
-                <Title value="2" />
-              </ScrollView>,
-          },
-          {
-            label: {j|1y|j},
-            renderContent: () =>
-              <ScrollView
-                style=Styles.tabWrapper
-                contentContainerStyle=Styles.infoTabContent>
-                <Title value="3" />
-              </ScrollView>,
-          },
-          {
-            label: {j|Qtd|j},
-            renderContent: () =>
-              <ScrollView
-                style=Styles.tabWrapper
-                contentContainerStyle=Styles.infoTabContent>
-                <Title value="4" />
-              </ScrollView>,
-          },
-          {
-            label: {j|Ytd|j},
-            renderContent: () =>
-              <ScrollView
-                style=Styles.tabWrapper
-                contentContainerStyle=Styles.infoTabContent>
-                <Title value="5" />
-              </ScrollView>,
-          },
-        ]
-      />
-    </View>,
+  render: _self => {
+    let%Epitath {result, refetch} =
+      c => <QueryContainer> ...c </QueryContainer>;
+
+    <StackNavigator.Screen navigation>
+      ...{() =>
+        <QueryRenderer result refetch>
+          ...{data =>
+            <View style=Styles.wrapper>
+              <AppStatusBar mode=Light />
+              <AppBar
+                title="Summ"
+                renderLeft={_ => <BackButton onPress=ignore />}
+              />
+              <SummaryPanel
+                date={Js.Date.make() |> Js.Date.toString}
+                unread={
+                  data##currentUser
+                  ->Belt.Option.map(user => user##summary##unread)
+                  ->Belt.Option.getWithDefault(0)
+                }
+                totalNotifications={
+                  data##currentUser
+                  ->Belt.Option.map(user => user##summary##total)
+                  ->Belt.Option.getWithDefault(0)
+                }
+                organizationsCount={
+                  data##currentUser
+                  ->Belt.Option.map(user => user##summary##organizations)
+                  ->Belt.Option.getWithDefault(0)
+                }
+                projectsCount={
+                  data##currentUser
+                  ->Belt.Option.map(user => user##summary##projects)
+                  ->Belt.Option.getWithDefault(0)
+                }
+                onPress=ignore
+              />
+              <Tabs
+                tabs=[
+                  {
+                    label: {j|All|j},
+                    renderContent: () =>
+                      <ScrollView
+                        style=Styles.tabWrapper
+                        contentContainerStyle=Styles.infoTabContent>
+                        <AppList>
+                          {data##currentUser
+                           ->Belt.Option.map(user => user##notifications)
+                           ->(
+                               notifications =>
+                                 switch (notifications) {
+                                 | Some(notifications) =>
+                                   Belt.Option.getWithDefault(
+                                     notifications,
+                                     [||],
+                                   )
+                                   ->Belt.Array.map(notification =>
+                                       <ListItem
+                                         key=notification##id
+                                         onPress=ignore
+                                         renderLeft={_ =>
+                                           <ListItemIcon icon=`_iosCheckmark />
+                                         }
+                                         renderCenter={_ =>
+                                           <View style=Styles.content>
+                                             <View>
+                                               <AppText
+                                                 value=notification##title
+                                                 style=Styles.contentTitle
+                                               />
+                                               <AppText
+                                                 value="grsabreu+lionnn@gmail.com"
+                                                 style=Styles.contentDetail
+                                               />
+                                               <AppText
+                                                 value=notification##createdAt
+                                                 style=Styles.contentDate
+                                               />
+                                             </View>
+                                           </View>
+                                         }
+                                         renderRight={_ =>
+                                           <ListItemMoreInfo direction=Right />
+                                         }
+                                       />
+                                     )
+                                 | None => [||]
+                                 }
+                             )}
+                        </AppList>
+                      </ScrollView>,
+                  },
+                  {
+                    label: {j|1w|j},
+                    renderContent: () =>
+                      <ScrollView
+                        style=Styles.tabWrapper
+                        contentContainerStyle=Styles.infoTabContent>
+                        <Title value="1" />
+                      </ScrollView>,
+                  },
+                  {
+                    label: {j|4w|j},
+                    renderContent: () =>
+                      <ScrollView
+                        style=Styles.tabWrapper
+                        contentContainerStyle=Styles.infoTabContent>
+                        <Title value="2" />
+                      </ScrollView>,
+                  },
+                  {
+                    label: {j|1y|j},
+                    renderContent: () =>
+                      <ScrollView
+                        style=Styles.tabWrapper
+                        contentContainerStyle=Styles.infoTabContent>
+                        <Title value="3" />
+                      </ScrollView>,
+                  },
+                  {
+                    label: {j|Qtd|j},
+                    renderContent: () =>
+                      <ScrollView
+                        style=Styles.tabWrapper
+                        contentContainerStyle=Styles.infoTabContent>
+                        <Title value="4" />
+                      </ScrollView>,
+                  },
+                  {
+                    label: {j|Ytd|j},
+                    renderContent: () =>
+                      <ScrollView
+                        style=Styles.tabWrapper
+                        contentContainerStyle=Styles.infoTabContent>
+                        <Title value="5" />
+                      </ScrollView>,
+                  },
+                ]
+              />
+            </View>
+          }
+        </QueryRenderer>
+      }
+    </StackNavigator.Screen>;
+  },
 };
