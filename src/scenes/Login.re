@@ -130,7 +130,7 @@ let make = (~navigation, _children) => {
                   text="Login"
                   disabled={
                     Belt.Option.isSome(getErrorForField(`email))
-                    || form.values.email == ""
+                    || String.length(form.values.email) < 0
                   }
                 />
               </View>

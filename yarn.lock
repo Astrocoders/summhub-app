@@ -3468,6 +3468,11 @@ bs-abstract@^0.16.0:
   resolved "https://registry.yarnpkg.com/bs-abstract/-/bs-abstract-0.16.0.tgz#cb214e0b45710c28562ddb671a736b084b8aaf86"
   integrity sha512-b1/qOWNBqL44lFciqEs73UxOwxAfnXeQgJtXGlfVwKYMZ6qNKgNrQe3Wokg8awQHs2EkmAJgtxku2zrGlwd/Jw==
 
+bs-epitath@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/bs-epitath/-/bs-epitath-1.0.1.tgz#501fba63cc00a425a4dd93001979f80889b0375b"
+  integrity sha512-a8bod2Xnjj1JgOCXPFZoHuVyqaoVfFTDVDOkyPgo91gMuDvFo29vWff5dB9sMu40Zv+JQfZVM6pb06CWJpl2mQ==
+
 bs-log@^0.0.9:
   version "0.0.9"
   resolved "https://registry.yarnpkg.com/bs-log/-/bs-log-0.0.9.tgz#b715a56dbf265a614ace828463ecd5dea9144397"

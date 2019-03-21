@@ -1,6 +1,22 @@
 open NavigationConfig;
 open BsReactNative;
 
+module Styles = {
+  open Style;
+  let wrapper = style([backgroundColor(String(AppConfig.theme.secondary))]);
+  let indicator =
+    style([
+      backgroundColor(String(AppConfig.theme.primary)),
+      marginBottom(Pt(5.)),
+    ]);
+  let label =
+    style([
+      color(String(AppConfig.theme.primary)),
+      marginHorizontal(Pt(0.)),
+      fontSize(Float(10.)),
+    ]);
+};
+
 let component = ReasonReact.statelessComponent("InAppNavigator");
 
 let make = (~navigation as mainNavigation, _children) => {
@@ -21,24 +37,9 @@ let make = (~navigation as mainNavigation, _children) => {
             renderTabBar={rest =>
               <RNTabView.TabBar
                 rest
-                indicatorStyle=Style.(
-                  style([
-                    backgroundColor(String(AppConfig.theme.primary)),
-                    marginBottom(Pt(5.)),
-                  ])
-                )
-                style=Style.(
-                  style([
-                    backgroundColor(String(AppConfig.theme.secondary)),
-                  ])
-                )
-                labelStyle=Style.(
-                  style([
-                    color(String(AppConfig.theme.primary)),
-                    marginHorizontal(Pt(0.)),
-                    fontSize(Float(10.)),
-                  ])
-                )
+                style=Styles.wrapper
+                indicatorStyle=Styles.indicator
+                labelStyle=Styles.label
               />
             }
             scenes=RNTabView.(

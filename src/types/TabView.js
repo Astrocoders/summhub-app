@@ -1,5 +1,5 @@
 import React from 'react'
-import { Dimensions, SafeAreaView } from 'react-native'
+import { Dimensions } from 'react-native'
 import { TabView, SceneMap } from 'react-native-tab-view'
 
 export default class TabNavigation extends React.Component {
