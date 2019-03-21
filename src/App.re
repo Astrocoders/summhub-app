@@ -65,7 +65,7 @@ let app = () =>
                  navigation
                  initialState={state.outerAppInitialState}
                />
-             | InApp => <InAppNavigator navigation />
+             | InApp => <InAppNavigator initialState=[|Home|] navigation />
              }
            }
          </StackNavigator>
