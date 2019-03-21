@@ -22,6 +22,7 @@
     "bs-react-native-vector-icons",
     "nautilus",
     "re-containers",
+    "bs-epitath",
     "bs-reform",
     "bs-moment",
     "re-debouncer",

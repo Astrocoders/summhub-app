@@ -11,7 +11,8 @@ module ConfigInApp = {
 
 module ConfigOuterApp = {
   type route =
-    | Startup;
+    | Login
+    | LoginAwaiting;
 };
 
 module OuterApp =

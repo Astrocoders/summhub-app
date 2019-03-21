@@ -3468,6 +3468,11 @@ bs-abstract@^0.16.0:
   resolved "https://registry.yarnpkg.com/bs-abstract/-/bs-abstract-0.16.0.tgz#cb214e0b45710c28562ddb671a736b084b8aaf86"
   integrity sha512-b1/qOWNBqL44lFciqEs73UxOwxAfnXeQgJtXGlfVwKYMZ6qNKgNrQe3Wokg8awQHs2EkmAJgtxku2zrGlwd/Jw==
 
+bs-epitath@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/bs-epitath/-/bs-epitath-1.0.1.tgz#501fba63cc00a425a4dd93001979f80889b0375b"
+  integrity sha512-a8bod2Xnjj1JgOCXPFZoHuVyqaoVfFTDVDOkyPgo91gMuDvFo29vWff5dB9sMu40Zv+JQfZVM6pb06CWJpl2mQ==
+
 bs-log@^0.0.9:
   version "0.0.9"
   resolved "https://registry.yarnpkg.com/bs-log/-/bs-log-0.0.9.tgz#b715a56dbf265a614ace828463ecd5dea9144397"
@@ -6003,7 +6008,7 @@ graceful-fs@^4.1.11, graceful-fs@^4.1.15, graceful-fs@^4.1.2, graceful-fs@^4.1.3
   resolved "https://registry.yarnpkg.com/graceful-fs/-/graceful-fs-4.1.15.tgz#ffb703e1066e8a0eeaa4c8b80ba9253eeefbfb00"
   integrity sha512-6uHUhOPEBgQ24HM+r6b/QwWfZq+yiFcipKFrOFiBEnWdy5sdzYoi+pJeQaPI5qOLRFqWmAXUPQNsielzdLoecA==
 
-graphql-tag@^2.9.2:
+graphql-tag@^2.6.0, graphql-tag@^2.9.2:
   version "2.10.1"
   resolved "https://registry.yarnpkg.com/graphql-tag/-/graphql-tag-2.10.1.tgz#10aa41f1cd8fae5373eaf11f1f67260a3cad5e02"
   integrity sha512-jApXqWBzNXQ8jYa/HLkZJaVw9jgwNqZkywa2zfFn16Iv1Zb7ELNHkJaXHR7Quvd5SIGsy6Ny7SUKATgnu05uEg==
@@ -9978,6 +9983,14 @@ react-native-gesture-handler@^1.0.7:
     hoist-non-react-statics "^2.3.1"
     invariant "^2.2.2"
     prop-types "^15.5.10"
+
+react-native-graphql-transformer@0.1.3:
+  version "0.1.3"
+  resolved "https://registry.yarnpkg.com/react-native-graphql-transformer/-/react-native-graphql-transformer-0.1.3.tgz#051a787d02409bdc0dda61871742435746809c2d"
+  integrity sha512-dsLXghV7bilZ8zOGkP+ufzg9GKfw6NBUSTgesVHBDaJZgf7qL4Lk5yFK/yKXjh3lnDkDz3EOVM/LdHUKMgqfoA==
+  dependencies:
+    graphql-tag "^2.6.0"
+    semver "^5.4.1"
 
 react-native-image-crop-picker@^0.21.2:
   version "0.21.3"

@@ -29,6 +29,7 @@
     "prettier": "^1.13.7",
     "prop-types": "^15.6.2",
     "react-dom": "16.6.3",
+    "react-native-graphql-transformer": "0.1.3",
     "react-test-renderer": "16.3.1",
     "standard-version": "^4.4.0"
   },
@@ -38,7 +39,7 @@
     ]
   },
   "scripts": {
-    "clean": "rm -rf node_modules/ && rm -rf lib/",
+    "clean": "rm -rf node_modules/ && rm -rf lib/ && npm run ios:clean",
     "start": "react-native start",
     "android": "react-native run-android",
     "android:clean": "cd android && ./gradlew clean",
@@ -51,7 +52,7 @@
     "android:reverse": "adb reverse tcp:7007 tcp:7007 && adb reverse tcp:8081 tcp:8081 && adb reverse tcp:8000 tcp:8000",
     "android:generate-sha256-fingerprint": "keytool -list -v -keystore android/app/my-release-key.keystore | grep SHA256 | head -n 1 | awk '{print $2;}'",
     "ios": "open ios/summhub.xcworkspace",
-    "ios:clear": "cd ios && rm -rf build",
+    "ios:clean": "cd ios && rm -rf build",
     "rn:link": "react-native link",
     "rn:run-android": "react-native run-android --variant=developmentDebug",
     "test": "bsb -make-world",
@@ -79,6 +80,7 @@
     "apollo-link-http": "^1.5.4",
     "apollo-link-ws": "^1.0.8",
     "bs-abstract": "^0.16.0",
+    "bs-epitath": "^1.0.1",
     "bs-log": "^0.0.9",
     "bs-moment": "^0.3.1",
     "bs-platform": "^4.0.18",
@@ -90,6 +92,7 @@
     "graphql": "^0.13.2",
     "graphql-tag": "^2.9.2",
     "lenses-ppx": "^1.0.1",
+    "let-anything": "jaredly/let-anything",
     "lodash": "^4.17.11",
     "nautilus": "Astrocoders/nautilus#3cda7027ed06efeafaef1007db38ead64773bdcd",
     "numeral": "^2.0.6",
