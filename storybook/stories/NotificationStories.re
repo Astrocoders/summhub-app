@@ -2,9 +2,16 @@ open BsReactNative;
 
 let data = {"name": "Foo", "age": 12};
 
+let navigation: Summhub.NavigationConfig.StackNavigator.navigation = {
+  push: ignore,
+  pop: ignore,
+  replace: ignore,
+  setOptions: ignore,
+};
+
 Storybook.(
   storiesOf("Notification", module_)
-  |> add("default", () => <Notification />)
+  |> add("default", () => <Notification navigation />)
   |> add("notification share", () =>
        <View style=Style.(style([flex(1.)]))>
          <NotificationShare

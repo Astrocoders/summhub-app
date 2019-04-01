@@ -1,4 +1,5 @@
 open BsReactNative;
+open NavigationConfig;
 
 module Styles = {
   open Style;
@@ -15,53 +16,107 @@ module Styles = {
   let title = style([padding(Pt(20.))]);
 };
 
+module Query = [%graphql
+  {|
+query AppQuery {
+  currentUser {
+    notifications {
+      id
+      title
+      createdAt
+      icon
+      link
+    }
+  }
+}
+|}
+];
+
+module QueryContainer = ReasonApollo.CreateQuery(Query);
+
+module StateConfig = {
+  type state = Deeplinking.state;
+};
+
+module State = ReContainers.WithState.Make(StateConfig);
+
 let data = {"name": "Foo", "age": 12};
 
 let component = ReasonReact.statelessComponent("Notification");
 
-let make = _children => {
+let make = (~navigation, _children) => {
   ...component,
-  render: _self =>
-    <View style=Styles.wrapper>
-      <AppStatusBar mode=Light />
-      <AppBar
-        title="Notification"
-        renderLeft={_ => <BackButton onPress=ignore />}
-      />
-      <Layout>
-        <SectionTitle value="Organizations" style=Styles.title />
-        <AppList
-          style=Style.(style([marginBottom(Pt(20.))]))
-          renderItems={_ =>
-            <View>
-              <ListItem
-                onPress=ignore
-                renderLeft={_ => <ListItemIcon icon=`_iosCheckmark />}
-                renderCenter={_ =>
-                  <View style=Styles.content>
-                    <AppText
-                      value="R$ 79,90 refunded"
-                      style=Styles.contentTitle
-                    />
-                    <AppText
-                      value="grsabreu+lionnn@gmail.com"
-                      style=Styles.contentDetail
-                    />
-                    <AppText value="7 dec 22:21" style=Styles.contentDate />
-                  </View>
-                }
+  render: _self => {
+    let%Epitath {result, refetch} =
+      c => <QueryContainer> ...c </QueryContainer>;
+
+    <StackNavigator.Screen navigation>
+      ...{() =>
+        <QueryRenderer result refetch>
+          ...{data =>
+            <View style=Styles.wrapper>
+              <AppStatusBar mode=Light />
+              <AppBar
+                title="Notification"
+                renderLeft={_ => <BackButton onPress=ignore />}
               />
+              <Layout>
+                <SectionTitle value="Organizations" style=Styles.title />
+                <AppList style=Style.(style([marginBottom(Pt(20.))]))>
+                  {data##currentUser
+                   ->Belt.Option.map(user => user##notifications)
+                   ->(
+                       notification =>
+                         switch (notification) {
+                         | Some(notification) =>
+                           Belt.Option.getWithDefault(notification, [||])
+                           ->Belt.Array.map(notification =>
+                               <ListItem
+                                 key=notification##id
+                                 onPress=ignore
+                                 renderLeft={_ =>
+                                   <ListItemIcon icon=`_iosCheckmark />
+                                 }
+                                 renderCenter={_ =>
+                                   <View style=Styles.content>
+                                     <View>
+                                       <AppText
+                                         value=notification##title
+                                         style=Styles.contentTitle
+                                       />
+                                       <AppText
+                                         value="grsabreu+lionnn@gmail.com"
+                                         style=Styles.contentDetail
+                                       />
+                                       <AppText
+                                         value=notification##createdAt
+                                         style=Styles.contentDate
+                                       />
+                                     </View>
+                                   </View>
+                                 }
+                                 renderRight={_ =>
+                                   <ListItemMoreInfo direction=Right />
+                                 }
+                               />
+                             )
+                         | None => [||]
+                         }
+                     )}
+                </AppList>
+                <JSONViewer data />
+                <Title value="Discussion" style=Styles.title />
+                <Messenger>
+                  <MessengerMessage
+                    sender="guilherme.decampo@astrocoders.com"
+                    content="wtf is these dudes! These guys need to fix these issues!"
+                  />
+                </Messenger>
+              </Layout>
             </View>
           }
-        />
-        <JSONViewer data />
-        <Title value="Discussion" style=Styles.title />
-        <Messenger>
-          <MessengerMessage
-            sender="guilherme.decampo@astrocoders.com"
-            content="wtf is these dudes! These guys need to fix these issues!"
-          />
-        </Messenger>
-      </Layout>
-    </View>,
+        </QueryRenderer>
+      }
+    </StackNavigator.Screen>;
+  },
 };
