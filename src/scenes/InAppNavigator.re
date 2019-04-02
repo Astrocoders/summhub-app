@@ -1,4 +1,4 @@
-open NavigationConfig;
+open NavigationConfig.InApp;
 open BsReactNative;
 
 module Styles = {
@@ -17,40 +17,25 @@ module Styles = {
     ]);
 };
 
+module HeaderNull = {
+  let component = ReasonReact.statelessComponent("HeaderNull");
+  let make = (~headerProps as _, _children) => {
+    ...component,
+    render: _self => ReasonReact.null,
+  };
+};
+
 let component = ReasonReact.statelessComponent("InAppNavigator");
 
-let make = (~navigation as mainNavigation, _children) => {
+let make = (~navigation as mainNavigation, ~initialState, _children) => {
   ...component,
-  render: _self =>
-    <StackNavigator.Screen
-      headerTitle="InAppNavigator" navigation=mainNavigation>
-      ...{() =>
-        <SafeAreaView
-          style=Style.(
-            style([
-              flex(1.),
-              backgroundColor(String(AppConfig.theme.primary)),
-            ])
-          )>
-          <RNTabView
-            tabBarPosition=`bottom
-            renderTabBar={rest =>
-              <RNTabView.TabBar
-                rest
-                style=Styles.wrapper
-                indicatorStyle=Styles.indicator
-                labelStyle=Styles.label
-              />
-            }
-            scenes=RNTabView.(
-              [|
-                scene(~key_="home", ~title="Home", ~render=() =>
-                  <View style=Style.(style([flex(1.)]))> <Home /> </View>
-                ),
-              |]
-            )
-          />
-        </SafeAreaView>
+  render: _self => {
+    <StackNavigator initialState headerComponent=HeaderNull.make>
+      ...{(~currentRoute, ~navigation) =>
+        switch (currentRoute) {
+        | Home => <Home navigation />
+        }
       }
-    </StackNavigator.Screen>,
+    </StackNavigator>;
+  },
 };
