@@ -8,6 +8,7 @@ type colors = {
   gray: string,
   gray100: string,
   error: string,
+  disabled: string,
   transparent: string,
 };
 
