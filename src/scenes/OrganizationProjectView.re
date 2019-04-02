@@ -82,14 +82,12 @@ let make =
   render: _self => {
     <OrganizationModalNavigatorConfig.StackNavigator.Screen navigation>
       ...{() => {
-        let%Epitath snackbar = c =>
-          <Snackbar
-            action={Paper.Snackbar.snackbarAction(
-              ~label="Fechar",
-              ~onPress=ignore,
-            )}>
-            ...c
-          </Snackbar>;
+        let%Hook snackbar =
+          Snackbar.make(
+            ~action={
+              Paper.Snackbar.snackbarAction(~label="Fechar", ~onPress=ignore);
+            },
+          );
 
         let%Epitath mutate = c =>
           <UpdateOrganizationProjectNameMutationContainer>
@@ -129,7 +127,7 @@ let make =
                          snackbar.send(
                            Set(
                              Open(
-                               {j|Infelizmente, nosso servidor não conseguiu processar essa requisição. Por favor, tente novamente.|j},
+                               "Unfortunately, our server was unable to process this request. Please try again.",
                              ),
                            ),
                          );
@@ -149,11 +147,7 @@ let make =
                 Set(Open(Belt.Option.getWithDefault(error, ""))),
               )
             | None =>
-              snackbar.send(
-                Set(
-                  Open({j|Não foi possível processar essa alteração|j}),
-                ),
-              )
+              snackbar.send(Set(Open("This change could not be processed")))
             }
           }
           initialState={name: ""}
@@ -194,11 +188,7 @@ let make =
                                    Js.Promise.resolve();
                                  | _ =>
                                    snackbar.send(
-                                     Set(
-                                       Open(
-                                         {j|Infelizmente, nosso servidor não conseguiu processar essa requisição. Por favor, tente novamente.|j},
-                                       ),
-                                     ),
+                                     Set(Open("Project Deleted")),
                                    );
                                    Js.Promise.resolve();
                                  }
@@ -207,10 +197,7 @@ let make =
                                  Js.Promise.resolve(),
                                )
                            )
-                        |> then_(() =>
-                             snackbar.send(Set(Open("Projeto Deletado")))
-                             |> Js.Promise.resolve
-                           )
+                        |> catch(_ => resolve())
                         |> ignore
                       )
                     }

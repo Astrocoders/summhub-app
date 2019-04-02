@@ -8,12 +8,6 @@ module Styles = {
       flex(1.),
       backgroundColor(String(AppConfig.theme.backgroundColor)),
     ]);
-  let content =
-    style([alignItems(FlexEnd), flexDirection(Column), width(Pct(90.))]);
-
-  let contentTitle = style([fontSize(Float(16.))]);
-
-  let contentDetail = style([fontSize(Float(14.))]);
 
   let buttonWrapper = style([marginTop(Pct(10.))]);
 
@@ -53,11 +47,23 @@ module Query = [%graphql
 
 module QueryContainer = ReasonApollo.CreateQuery(Query);
 
-module StateConfig = {
-  type state = Deeplinking.state;
-};
+module CreateOrganizationMutation = [%graphql
+  {|
+    mutation CreateOrganization {
+      createOrganization {
+        error
+        organization {
+          id
+          name
+          createdAt
+        }
+      }
+    }
+  |}
+];
 
-module State = ReContainers.WithState.Make(StateConfig);
+module CreateOrganizationMutationContainer =
+  ReasonApollo.CreateMutation(CreateOrganizationMutation);
 
 let component = ReasonReact.statelessComponent("Organizations");
 
@@ -66,6 +72,18 @@ let make = (~navigation, _children) => {
   render: _self => {
     let%Epitath {result, refetch} =
       c => <QueryContainer> ...c </QueryContainer>;
+
+    let%Hook snackbar =
+      Snackbar.make(
+        ~action={
+          Paper.Snackbar.snackbarAction(~label="Fechar", ~onPress=ignore);
+        },
+      );
+
+    let%Epitath createOrganization = c =>
+      <CreateOrganizationMutationContainer>
+        ...{(mutate, _) => c(mutate)}
+      </CreateOrganizationMutationContainer>;
 
     <StackNavigator.Screen navigation>
       ...{() =>
@@ -122,16 +140,39 @@ let make = (~navigation, _children) => {
               </AppList>
               <AppFAB
                 icon={
-                  Element(
-                    _ =>
-                      <RNIcons.MaterialCommunityIcons
-                        name=`_plus
-                        size=24.
-                        color={AppConfig.theme.contrastWhite}
-                      />,
+                  <RNIcons.MaterialCommunityIcons
+                    name=`_plus
+                    size=24.
+                    color={AppConfig.theme.contrastWhite}
+                  />
+                }
+                onPress={() =>
+                  Js.Promise.(
+                    createOrganization()
+                    |> then_(result =>
+                         CreateOrganizationMutationContainer.convertJsInputToReason(
+                           result,
+                         ).
+                           data
+                         ->Belt.Option.map(data => data##createOrganization)
+                         ->Belt.Option.map(createOrganization =>
+                             switch (createOrganization##error) {
+                             | Some(error) =>
+                               snackbar.send(Set(Open(error)));
+                               Js.Promise.resolve();
+                             | _ =>
+                               snackbar.send(
+                                 Set(Open("Organization Created")),
+                               );
+                               Js.Promise.resolve();
+                             }
+                           )
+                         ->Belt.Option.getWithDefault(Js.Promise.resolve())
+                       )
+                    |> catch(_ => resolve())
+                    |> ignore
                   )
                 }
-                small=true
               />
               <SectionTitle
                 value="Version"
