@@ -89,7 +89,7 @@ let make =
         let%Hook snackbar =
           Snackbar.make(
             ~action={
-              Paper.Snackbar.snackbarAction(~label="Fechar", ~onPress=ignore);
+              Paper.Snackbar.snackbarAction(~label="Close", ~onPress=ignore);
             },
           );
 
@@ -129,13 +129,7 @@ let make =
                          snackbar.send(Set(Open(error)));
                          Js.Promise.resolve();
                        | _ =>
-                         snackbar.send(
-                           Set(
-                             Open(
-                               "Unfortunately, our server was unable to process this request. Please try again.",
-                             ),
-                           ),
-                         );
+                         snackbar.send(Set(Open("Organization Renamed.")));
                          Js.Promise.resolve();
                        }
                      )
@@ -188,7 +182,7 @@ let make =
                                  | Some(error) =>
                                    snackbar.send(Set(Open(error)));
                                    Js.Promise.resolve();
-                                 | _ =>
+                                 | None =>
                                    snackbar.send(
                                      Set(Open("Organization Removed")),
                                    );
