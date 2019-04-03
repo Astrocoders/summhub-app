@@ -8,44 +8,98 @@ module Styles = {
       flex(1.),
       backgroundColor(String(AppConfig.theme.backgroundColor)),
     ]);
-
-  let buttonWrapper = style([marginTop(Pct(10.))]);
-
-  let content = style([width(Pct(80.))]);
-
-  let contentTitle = style([fontWeight(`_700), fontSize(Float(16.))]);
-
-  let contentDetail = style([fontSize(Float(14.))]);
-
-  let contentDate = style([fontSize(Float(12.))]);
 };
 
-module Query = [%graphql
+module OrganizationsQuery = [%graphql
   {|
-    query AppQuery {
+    query OrganizationsQuery($before: String, $last: Int, $after: String, $first: Float) {
       currentUser {
         id
         email
-        role
-        summary {
-          unread
-          total
-          projects
-          organizations
-        }
-        notifications {
-          id
-          title
-          createdAt
-          icon
-          link
+        organizations(before: $before, last: $last, after: $after, first: $first) {
+          pageInfo {
+            startCursor
+            endCursor
+            hasNextPage
+          }
+          edges {
+            cursor
+            node {
+              id
+              name
+            }
+          }
         }
       }
     }
   |}
 ];
 
-module QueryContainer = ReasonApollo.CreateQuery(Query);
+module OrganizationsQueryContainer =
+  ReasonApollo.CreateQuery(OrganizationsQuery);
+
+let renderOrganizations = (~fetchMore, ~data, organizations) =>
+  <FlatList
+    data=organizations
+    keyExtractor={(item, _idx) => "organization_" ++ item##node##id}
+    onEndReached={_ =>
+      if (Belt.Option.getWithDefault(
+            data##currentUser##organizations##pageInfo##hasNextPage,
+            false,
+          )) {
+        let variables =
+          OrganizationsQuery.make(
+            ~before=?data##currentUser##organizations##pageInfo##startCursor,
+            ~after=?data##currentUser##organizations##pageInfo##endCursor,
+            (),
+          )##variables;
+        let concatResults: (Js.Json.t, option(Js.Json.t)) => Js.Json.t = [%raw
+          {|
+              function(prev, next) {
+                return {
+                  organizations: {
+                    ...next.organizations,
+                    edges: [
+                      ...prev.organizations.edges,
+                      ...next.organizations.edges
+                    ]
+                  }
+                };
+              }
+              |}
+        ];
+        Js.Promise.(
+          fetchMore(
+            ~variables=?Some(variables),
+            ~updateQuery=
+              (prev, next) =>
+                concatResults(
+                  prev,
+                  ReasonApolloQuery.(next->fetchMoreResultGet),
+                ),
+            (),
+          )
+          |> then_(_ => resolve())
+          |> catch(_error => resolve())
+        )
+        |> ignore;
+      } else {
+        ();
+      }
+    }
+    renderItem={FlatList.renderItem(({item}) =>
+      item##node
+      |> (
+        organization =>
+          <OrganizationItem
+            id=organization##id
+            name=organization##name
+            members=15
+            projects=4
+          />
+      )
+    )}
+  />;
 
 module CreateOrganizationMutation = [%graphql
   {|
@@ -70,13 +124,13 @@ let component = ReasonReact.statelessComponent("Organizations");
 let make = (~navigation, _children) => {
   ...component,
   render: _self => {
-    let%Epitath {result, refetch} =
-      c => <QueryContainer> ...c </QueryContainer>;
+    let%Epitath {result, refetch, fetchMore} =
+      c => <OrganizationsQueryContainer> ...c </OrganizationsQueryContainer>;
 
     let%Hook snackbar =
       Snackbar.make(
         ~action={
-          Paper.Snackbar.snackbarAction(~label="Fechar", ~onPress=ignore);
+          Paper.Snackbar.snackbarAction(~label="Close", ~onPress=ignore);
         },
       );
 
@@ -100,43 +154,21 @@ let make = (~navigation, _children) => {
                 style=Style.(style([paddingHorizontal(Pt(20.))]))
               />
               <AppList>
-                {data##currentUser
-                 ->Belt.Option.map(user => user##notifications)
-                 ->(
-                     notifications =>
-                       switch (notifications) {
-                       | Some(notifications) =>
-                         Belt.Option.getWithDefault(notifications, [||])
-                         ->Belt.Array.map(organization =>
-                             <ListItem
-                               key=organization##id
-                               onPress=ignore
-                               renderLeft={_ =>
-                                 <Title
-                                   value={j|Itaú|j}
-                                   style=Styles.contentTitle
-                                 />
-                               }
-                               renderCenter={_ =>
-                                 <View style=Styles.content>
-                                   <AppText
-                                     value="123 members"
-                                     style=Styles.contentDetail
-                                   />
-                                   <AppText
-                                     value="4 projects"
-                                     style=Styles.contentDetail
-                                   />
-                                 </View>
-                               }
-                               renderRight={_ =>
-                                 <ListItemMoreInfo direction=Right />
-                               }
-                             />
-                           )
-                       | None => [||]
-                       }
-                   )}
+                {switch (result) {
+                 | Error(_) => <Whoops />
+                 | Data(data) =>
+                   data
+                   ->(data => data##currentUser##organizations##edges)
+                   ->Belt.Option.getWithDefault([||])
+                   ->(
+                       organizations =>
+                         renderOrganizations(~fetchMore, ~data, organizations)
+                     )
+                 | Loading =>
+                   <View style=Styles.notFoundContentWrapper>
+                     <FullLoader mode=Black />
+                   </View>
+                 }}
               </AppList>
               <AppFAB
                 icon={
