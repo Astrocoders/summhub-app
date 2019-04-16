@@ -1,4 +1,5 @@
 open BsReactNative;
+open ReasonApolloTypes;
 open NavigationConfig.InApp;
 
 module Styles = {
@@ -158,7 +159,9 @@ let make = (~navigation, _children) => {
                  | Error(_) => <Whoops />
                  | Data(data) =>
                    data
-                   ->(data => data##currentUser##organizations##edges)
+                   ->Belt.Option.flatMap(data =>
+                       data##currentUser##organizations##edges
+                     )
                    ->Belt.Option.getWithDefault([||])
                    ->(
                        organizations =>
