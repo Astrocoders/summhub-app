@@ -15,6 +15,7 @@ let theme = {
   gray: "#C5C8D0",
   gray100: "#F9F9F9",
   error: "#AC3931",
+  disabled: "#A1AAB4",
   transparent: "transparent",
 };
 

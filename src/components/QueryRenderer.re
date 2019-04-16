@@ -16,7 +16,7 @@ module Styles = {
   let retry = style([minWidth(Pt(200.)), marginTop(Pt(40.))]);
 };
 
-let component = ReasonReact.statelessComponent("component_name");
+let component = ReasonReact.statelessComponent("QueryRenderer");
 
 let make =
     (
@@ -35,10 +35,10 @@ let make =
           onCatch={() => {
             let formatError: ReasonApolloTypes.apolloError => string = [%bs.raw
               {|
-        function(error) {
-          return process.env.SERVER_LOCATION + JSON.stringify(error, null, 1)
-        }
-        |}
+                function(error) {
+                  return process.env.SERVER_LOCATION + JSON.stringify(error, null, 1)
+                }
+              |}
             ];
             Alert.alert(~title="Error", ~message=formatError(error), ());
           }}>

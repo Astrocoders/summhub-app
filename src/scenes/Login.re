@@ -45,7 +45,7 @@ let make = (~navigation, _children) => {
         let%Epitath snackbar = c =>
           <Snackbar
             action={Paper.Snackbar.snackbarAction(
-              ~label="Fechar",
+              ~label="Close",
               ~onPress=ignore,
             )}>
             ...c

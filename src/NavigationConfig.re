@@ -6,7 +6,8 @@ module Config = {
 
 module ConfigInApp = {
   type route =
-    | Home;
+    | Home
+    | Organizations;
 };
 
 module ConfigOuterApp = {

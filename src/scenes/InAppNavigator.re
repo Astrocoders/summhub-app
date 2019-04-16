@@ -34,6 +34,7 @@ let make = (~navigation as mainNavigation, ~initialState, _children) => {
       ...{(~currentRoute, ~navigation) =>
         switch (currentRoute) {
         | Home => <Home navigation />
+        | Organizations => <Organizations navigation />
         }
       }
     </StackNavigator>;
